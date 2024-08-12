@@ -4,19 +4,21 @@ import "./Row.css";
 
 import Youtube from "react-youtube";
 import movieTrailer from "movie-trailer";
+import { Skeleton } from "@mui/material";
 
 const baseUrl = "https://image.tmdb.org/t/p/original/";
 
 function Row({ title, fetchUrl, isLargeRow }) {
   const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [trailerUrl, setTrailerUrl] = useState("");
 
   useEffect(() => {
     async function fetchData() {
       const request = await axios.get(fetchUrl);
-      // console.log(request);
       setMovies(request.data.results);
-      return request;
+      setLoading(false);
+      // console.log(request);
     }
     fetchData();
   }, [fetchUrl]);
@@ -48,16 +50,11 @@ function Row({ title, fetchUrl, isLargeRow }) {
 
       <div className="row__posters">
         {movies.map((movie) => {
-          return (
-            <img
-              key={movie.id}
-              onClick={() => handleClick(movie)}
-              className={`row__poster ${isLargeRow && "row__posterLarge"}`}
-              src={`${baseUrl}${
-                isLargeRow ? movie.poster_path : movie.backdrop_path
-              }`}
-              alt={movie.name}
-            />
+          const imgSrc = `${baseUrl}${isLargeRow ? movie.poster_path : movie.backdrop_path}`;
+          return loading ? (
+            <Skeleton variant="rectangular" width={100} height={isLargeRow ? 250 : 100} animation="wave" sx={{ bgcolor: "grey.900", marginRight: "10px", minWidth: "150px" }} />
+          ) : (
+            <img key={movie.id} onClick={() => handleClick(movie)} className={`row__poster ${isLargeRow && "row__posterLarge"}`} src={imgSrc} alt={movie.name} />
           );
         })}
       </div>

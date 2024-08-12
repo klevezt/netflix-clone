@@ -2,6 +2,7 @@
   margin: 0;
 }
 
-.app {
+.app,
+html {
   background-color: #111;
 }
